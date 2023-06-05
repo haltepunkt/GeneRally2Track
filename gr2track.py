@@ -26,9 +26,9 @@ with open(arguments.track, 'rb') as track_file:
   signature_format = '6s'
   signature_size = calcsize(signature_format)
 
-  signature = unpack(signature_format, buffer[0:signature_size])
+  signature = unpack(signature_format, buffer[0:signature_size])[0].decode('utf-8')
 
-  if signature[0] == b'GR2TRK':
+  if signature == 'GR2TRK':
     properties_offset = 0x5F
     properties_format = 'BBHBB'
     properties_size = calcsize(properties_format)
@@ -67,7 +67,7 @@ with open(arguments.track, 'rb') as track_file:
       print(json.dumps(track.__dict__))
     else:
       print(f'File name:\t{os.path.basename(arguments.track)}')
-      print(f'File signature:\t{signature[0].decode("utf-8")}')
+      print(f'File signature:\t{signature}')
       print('')
       print(f'Name:\t\t{track.name}')
       print(f'Author:\t\t{track.author}')
