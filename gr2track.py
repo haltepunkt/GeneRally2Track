@@ -1,6 +1,26 @@
 from dataclasses import dataclass
+from enum import IntEnum
 from struct import *
 import argparse, json, os
+
+class TrackType(IntEnum):
+  OTHER = 0,
+  CIRCUIT = 1,
+  STREETCIRCUIT = 2,
+  ROADCOURSE = 3,
+  OVAL = 4,
+  STUNT = 5,
+  OFFROAD = 6
+
+  def __str__(self):
+    if self == self.STREETCIRCUIT:
+      return 'Street Circuit'
+    elif self == self.ROADCOURSE:
+      return 'Road Course'
+    elif self == self.OFFROAD:
+      return 'Off-Road'
+    else:
+      return self.name.capitalize()
 
 @dataclass
 class Track:
@@ -13,6 +33,7 @@ class Track:
   zoom: int
   world_size: int
   real_world: bool
+  type: TrackType
 
 argument_parser = argparse.ArgumentParser(description='Print details of GeneRally 2 tracks')
 
@@ -64,9 +85,15 @@ with open(arguments.track, 'rb') as track_file:
     real_world_size = calcsize(real_world_format)
     real_world = unpack(real_world_format, buffer[real_world_offset:real_world_offset + real_world_size])[0]
 
+    track_type_offset = real_world_offset + real_world_size
+    track_type_format = 'B'
+    track_type_size = calcsize(track_type_format)
+    track_type = TrackType(unpack(track_type_format, buffer[track_type_offset: track_type_offset + track_type_size])[0])
+
     track = Track(
       name, author, comments,
-      water_level, view_angle, rotation, zoom, world_size, real_world
+      water_level, view_angle, rotation, zoom, world_size,
+      real_world, track_type
     )
 
     if arguments.json:
@@ -85,3 +112,4 @@ with open(arguments.track, 'rb') as track_file:
       print(f'Zoom:\t\t{track.zoom}')
       print(f'World size:\t{track.world_size}')
       print(f'Real world:\t{track.real_world}')
+      print(f'Type:\t\t{track.type}')
