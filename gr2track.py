@@ -40,26 +40,26 @@ with open(arguments.track, 'rb') as track_file:
 
     name_offset = strings_offset
     name_length_format = 'B'
-    name_length = unpack(name_length_format, buffer[name_offset:name_offset + 1])[0]
+    name_length = unpack(name_length_format, buffer[name_offset:name_offset + calcsize(name_length_format)])[0]
     name_format = f'{name_length}s'
 
-    name = unpack(name_format, buffer[name_offset + 1:name_offset + 1 + name_length])[0].decode('utf-8')
+    name = unpack(name_format, buffer[name_offset + calcsize(name_length_format):name_offset + calcsize(name_length_format) + name_length])[0].decode('utf-8')
 
-    author_offset = name_offset + 1 + name_length
+    author_offset = name_offset + calcsize(name_length_format) + name_length
     author_length_format = 'B'
-    author_length = unpack(author_length_format, buffer[author_offset:author_offset + 1])[0]
+    author_length = unpack(author_length_format, buffer[author_offset:author_offset + calcsize(author_length_format)])[0]
     author_format = f'{author_length}s'
 
-    author = unpack(author_format, buffer[author_offset + 1:author_offset + 1 + author_length])[0].decode('utf-8')
+    author = unpack(author_format, buffer[author_offset + calcsize(author_length_format):author_offset + calcsize(author_length_format) + author_length])[0].decode('utf-8')
 
-    comments_offset = author_offset + 1 + author_length
+    comments_offset = author_offset + calcsize(author_length_format) + author_length
     comments_length_format = 'B'
-    comments_length = unpack(comments_length_format, buffer[comments_offset:comments_offset + 1])[0]
+    comments_length = unpack(comments_length_format, buffer[comments_offset:comments_offset + calcsize(comments_length_format)])[0]
     comments_format = f'{comments_length}s'
 
-    comments = unpack(comments_format, buffer[comments_offset + 1:comments_offset + 1 + comments_length])[0].decode('utf-8')
+    comments = unpack(comments_format, buffer[comments_offset + calcsize(comments_length_format):comments_offset + calcsize(comments_length_format) + comments_length])[0].decode('utf-8')
 
-    real_world_offset = comments_offset + 1 + comments_length
+    real_world_offset = comments_offset + calcsize(comments_length_format) + comments_length
     real_world_format = '?'
     real_world_size = calcsize(real_world_format)
     real_world = unpack(real_world_format, buffer[real_world_offset:real_world_offset + real_world_size])[0]
