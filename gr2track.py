@@ -12,6 +12,7 @@ class Track:
   rotation: int
   zoom: int
   world_size: int
+  real_world: bool
 
 argument_parser = argparse.ArgumentParser(description='Print details of GeneRally 2 tracks')
 
@@ -58,9 +59,14 @@ with open(arguments.track, 'rb') as track_file:
 
     comments = unpack(comments_format, buffer[comments_offset + 1:comments_offset + 1 + comments_length])[0].decode('utf-8')
 
+    real_world_offset = comments_offset + 1 + comments_length
+    real_world_format = '?'
+    real_world_size = calcsize(real_world_format)
+    real_world = unpack(real_world_format, buffer[real_world_offset:real_world_offset + real_world_size])[0]
+
     track = Track(
       name, author, comments,
-      water_level, view_angle, rotation, zoom, world_size
+      water_level, view_angle, rotation, zoom, world_size, real_world
     )
 
     if arguments.json:
@@ -78,3 +84,4 @@ with open(arguments.track, 'rb') as track_file:
       print(f'Rotation:\t{track.rotation}')
       print(f'Zoom:\t\t{track.zoom}')
       print(f'World size:\t{track.world_size}')
+      print(f'Real world:\t{track.real_world}')
